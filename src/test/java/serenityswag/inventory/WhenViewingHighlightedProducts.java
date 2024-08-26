@@ -2,6 +2,7 @@ package serenityswag.inventory;
 
 import net.serenitybdd.annotations.Managed;
 import net.serenitybdd.annotations.Steps;
+import net.serenitybdd.core.Serenity;
 import net.serenitybdd.junit.runners.SerenityRunner;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.Test;
@@ -21,8 +22,10 @@ public class WhenViewingHighlightedProducts {
 
     @Steps
     LoginActions login;
-    ProductListPageObject productList;
-    ProductDetailsPage productDetails;
+    //ProductListPageObject productList;
+    ProductList productList;
+    ProductDetails productDetails;
+    ViewProductDetailsActions viewProductDetails;
 
     @Test
     public void shouldDisplayHighlightedProductsOnTheWelcomePage() {
@@ -52,10 +55,16 @@ public class WhenViewingHighlightedProducts {
         login.as(User.STANDARD_USER);
 
         String firstItemName = productList.titles().get(0);
-        productList.openProductDetailsFor(firstItemName);
-        assertThat(productDetails.productName()).isEqualTo(firstItemName);
-        productDetails.ProductImageWithAltValueOf(firstItemName).shouldBeVisible();
 
+        //productList.openProductDetailsFor(firstItemName);
+        viewProductDetails.forProductWithName(firstItemName);
+
+        Serenity.reportThat("The product name should be correctly displayed",
+                () -> assertThat(productDetails.productName()).isEqualTo(firstItemName)
+                );
+        Serenity.reportThat("The product image should have the correct alt text",
+                () -> productDetails.ProductImageWithAltValueOf(firstItemName).shouldBeVisible()
+                );
     }
 
 }
